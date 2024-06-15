@@ -1,6 +1,6 @@
 package com.yilmaz.blogapp.entity;
 
-import com.yilmaz.blogapp.dto.user.UserResponse;
+import com.yilmaz.blogapp.dto.user.UserResponseDTO;
 import com.yilmaz.blogapp.entity.enums.Role;
 import jakarta.persistence.*;
 
@@ -34,8 +34,8 @@ public class User {
     @Column(columnDefinition = "longblob")
     private byte[] img;
 
-    public UserResponse getUserResponse() {
-        return UserResponse.builder()
+    public UserResponseDTO getUserResponse() {
+        return UserResponseDTO.builder()
                 .id(id)
                 .role(role)
                 .firstname(firstname)

@@ -1,7 +1,7 @@
 package com.yilmaz.blogapp.service.auth;
 
-import com.yilmaz.blogapp.dto.auth.LoginRequest;
-import com.yilmaz.blogapp.dto.auth.RegisterRequest;
+import com.yilmaz.blogapp.dto.auth.LoginRequestDTO;
+import com.yilmaz.blogapp.dto.auth.RegisterRequestDTO;
 import com.yilmaz.blogapp.entity.User;
 import com.yilmaz.blogapp.entity.enums.Role;
 import com.yilmaz.blogapp.repository.UserRepository;
@@ -30,7 +30,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
 
-    public boolean register(RegisterRequest request) throws IOException {
+    public boolean register(RegisterRequestDTO request) throws IOException {
         if (!isMailAddressExist(request.getEmail())) {
             byte[] profileImg = null;
             if (request.getImg() != null)
@@ -54,7 +54,7 @@ public class AuthenticationService {
         return repository.findByEmail(email).isPresent();
     }
 
-    public void login(LoginRequest request, HttpServletResponse response) throws IOException, JSONException {
+    public void login(LoginRequestDTO request, HttpServletResponse response) throws IOException, JSONException {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -69,13 +69,7 @@ public class AuthenticationService {
 
         if (user.isPresent()) {
             response.addHeader("Authorization", "Bearer " + jwt);
-            response.getWriter().write(
-                    new JSONObject().
-                            put("id", user.get().getId()).
-                            put("role", user.get().getRole()).
-                            put("firstname", user.get().getFirstname()).
-                            put("lastname", user.get().getLastname()).toString()
-            );
+            response.getWriter().write(new JSONObject().put("id", user.get().getId()).toString());
         }
 
     }

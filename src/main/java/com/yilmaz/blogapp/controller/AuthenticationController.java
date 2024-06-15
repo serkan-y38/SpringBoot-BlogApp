@@ -1,7 +1,7 @@
 package com.yilmaz.blogapp.controller;
 
-import com.yilmaz.blogapp.dto.auth.LoginRequest;
-import com.yilmaz.blogapp.dto.auth.RegisterRequest;
+import com.yilmaz.blogapp.dto.auth.LoginRequestDTO;
+import com.yilmaz.blogapp.dto.auth.RegisterRequestDTO;
 import com.yilmaz.blogapp.service.auth.AuthenticationService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +20,13 @@ public class AuthenticationController {
     private final AuthenticationService service;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@ModelAttribute RegisterRequest request) throws IOException {
+    public ResponseEntity<?> register(@ModelAttribute RegisterRequestDTO request) throws IOException {
         return service.register(request) ? ResponseEntity.status(HttpStatus.OK).build() : ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
     }
 
     @PostMapping("/login")
     public void login(
-            @RequestBody LoginRequest request,
+            @RequestBody LoginRequestDTO request,
             HttpServletResponse response
     ) throws IOException, JSONException {
         service.login(request, response);

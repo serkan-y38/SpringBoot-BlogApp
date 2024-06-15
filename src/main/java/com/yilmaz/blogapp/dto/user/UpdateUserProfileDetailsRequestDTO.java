@@ -1,4 +1,4 @@
-package com.yilmaz.blogapp.dto.auth;
+package com.yilmaz.blogapp.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,10 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
-    private Integer id;
+public class UpdateUserProfileDetailsRequestDTO {
     private String email;
-    private String password;
     private String firstname;
     private String lastname;
     private MultipartFile img;
