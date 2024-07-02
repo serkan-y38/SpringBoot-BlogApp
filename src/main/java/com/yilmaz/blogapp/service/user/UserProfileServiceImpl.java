@@ -1,8 +1,10 @@
 package com.yilmaz.blogapp.service.user;
 
+import com.yilmaz.blogapp.dto.auth.LoginRequestDTO;
 import com.yilmaz.blogapp.dto.user.UpdateEmailRequestDTO;
 import com.yilmaz.blogapp.dto.user.UpdatePasswordRequestDTO;
 import com.yilmaz.blogapp.dto.user.UpdateUserProfileDetailsRequestDTO;
+import com.yilmaz.blogapp.dto.user.UserResponseDTO;
 import com.yilmaz.blogapp.entity.User;
 import com.yilmaz.blogapp.repository.UserRepository;
 import com.yilmaz.blogapp.service.auth.JwtService;
@@ -95,6 +97,49 @@ public class UserProfileServiceImpl implements UserProfileService {
             user.setEmail(updateEmailRequestDTO.getNewEmail());
             userRepository.save(user);
             regenerateToken(response, user.getEmail());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public UserResponseDTO getUserProfileDetails(Integer id, String token) {
+
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (optionalUser.isPresent()) {
+
+            if (isRequestedAndAuthenticatedUserSame(token, optionalUser.get().getEmail()))
+                return null;
+
+            return UserResponseDTO.builder()
+                    .id(optionalUser.get().getId())
+                    .role(optionalUser.get().getRole())
+                    .firstname(optionalUser.get().getFirstname())
+                    .lastname(optionalUser.get().getLastname())
+                    .img(optionalUser.get().getImg())
+                    .build();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean deleteUserAccount(String token, LoginRequestDTO loginRequestDTO) {
+
+        if (isRequestedAndAuthenticatedUserSame(token, loginRequestDTO.getEmail()))
+            return false;
+
+        Optional<User> optionalUser = userRepository.findByEmail(loginRequestDTO.getEmail());
+
+        if (optionalUser.isPresent()) {
+
+            var springUser = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            if (!passwordEncoder.matches(loginRequestDTO.getPassword(), springUser.getPassword()))
+                return false;
+
+            userRepository.delete(optionalUser.get());
+
             return true;
         }
         return false;
